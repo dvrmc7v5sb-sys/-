@@ -145,7 +145,7 @@ input[type="date"],input[type="time"]{
   <div class="page active" id="page1">
     <div class="card">
       <div class="avatar">🐱</div>
-      <h2>可以和我一起打瓦排吗？！</h2>
+      <h2>可以和我一起打瓦吗？</h2>
       <div class="btn-wrap">
         <button class="btn-purple" onclick="goPage(2)">愿意</button>
         <button class="btn-gray" id="noBtn">不要</button>
@@ -200,8 +200,21 @@ input[type="date"],input[type="time"]{
     </div>
   </div>
 
-  <!-- Page5 结果确认页 -->
+  <!-- Page5 新增位置选择页 -->
   <div class="page" id="page5">
+    <div class="card">
+      <h2>选择一下你的位置</h2>
+      <div class="btn-wrap">
+        <button class="btn-gray" id="duelBtn">决斗</button>
+        <button class="btn-gray" id="initBtn">先锋</button>
+        <button class="btn-gray" id="sentryBtn">哨位</button>
+        <button class="btn-purple" onclick="selectRole('天才烟位')">天才烟位</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page6 结果确认页 -->
+  <div class="page" id="page6">
     <div class="card">
       <div class="avatar">🐱</div>
       <h2>真开心你没有拒绝，我会准时上线等你！</h2>
@@ -209,6 +222,7 @@ input[type="date"],input[type="time"]{
         <div class="result-item">日期：<span id="resDate"></span></div>
         <div class="result-item">时间：<span id="resTime"></span></div>
         <div class="result-item">模式：<span id="resMode"></span></div>
+        <div class="result-item">位置：<span id="resRole"></span></div>
       </div>
       <p>带好你的准星，我带好霓虹。</p>
     </div>
@@ -217,7 +231,7 @@ input[type="date"],input[type="time"]{
 
 <script>
 // 全局存储
-const data = {date:"",time:"",modes:[]};
+const data = {date:"",time:"",modes:[],role:""};
 const pages = document.querySelectorAll(".page");
 
 // 页面切换
@@ -228,7 +242,8 @@ function goPage(num){
   const target = document.getElementById("page"+num);
   setTimeout(()=>target.classList.add("active"),50);
   if(num===4){bindModeBtns();}
-  if(num===5){renderResult();}
+  if(num===6){renderResult();}
+  if(num===5){bindRoleEscapeBtns();}
 }
 
 // 【不要按钮】鼠标悬浮随机移动
@@ -242,6 +257,33 @@ noBtn.addEventListener("mouseenter",()=>{
   noBtn.style.left = rx+"px";
   noBtn.style.top = ry+"px";
 })
+
+// 位置页逃跑按钮绑定
+function bindRoleEscapeBtns(){
+  const duelBtn = document.getElementById("duelBtn");
+  const initBtn = document.getElementById("initBtn");
+  const sentryBtn = document.getElementById("sentryBtn");
+  function makeEscape(btn){
+    btn.addEventListener("mouseenter",()=>{
+      const ww = window.innerWidth - btn.offsetWidth - 40;
+      const hh = window.innerHeight - btn.offsetHeight -40;
+      const rx = Math.random()*ww;
+      const ry = Math.random()*hh;
+      btn.style.position="fixed";
+      btn.style.left = rx+"px";
+      btn.style.top = ry+"px";
+    })
+  }
+  makeEscape(duelBtn);
+  makeEscape(initBtn);
+  makeEscape(sentryBtn);
+}
+
+// 选择位置
+function selectRole(roleName){
+  data.role = roleName;
+  goPage(6);
+}
 
 // 初始化日期，默认今天
 const dateInput = document.getElementById("selDate");
@@ -265,7 +307,7 @@ function bindModeBtns(){
         this.classList.add("selected");
         data.modes.push(val);
       }
-      // 选完至少一项自动跳结果页
+      // 选完至少一项自动跳【位置选择页 page5】
       if(data.modes.length>0){
         data.date = dateInput.value;
         data.time = timeInput.value;
@@ -280,6 +322,7 @@ function renderResult(){
   document.getElementById("resDate").innerText = data.date;
   document.getElementById("resTime").innerText = data.time;
   document.getElementById("resMode").innerText = data.modes.join("、");
+  document.getElementById("resRole").innerText = data.role;
 }
 </script>
 </body>
